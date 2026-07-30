@@ -1,4 +1,4 @@
-```javascript
+
 /* ==================================================
    YAN.EXE
    Cute Digital Wave
@@ -313,4 +313,3 @@ window.addEventListener(
 
     }
 );
-```
