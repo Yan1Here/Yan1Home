@@ -1,100 +1,64 @@
+```javascript
 /* ==================================================
-   CUSTOM CURSOR
+   YAN.EXE
+   Cute Digital Wave
 ================================================== */
-
-const cursor = document.querySelector(".cursor");
-const follower = document.querySelector(".cursor-follower");
-
-
-let mouseX = 0;
-let mouseY = 0;
-
-let followerX = 0;
-let followerY = 0;
-
-
-document.addEventListener("mousemove", (event) => {
-
-    mouseX = event.clientX;
-    mouseY = event.clientY;
-
-    cursor.style.left =
-        `${mouseX}px`;
-
-    cursor.style.top =
-        `${mouseY}px`;
-
-});
-
-
-function animateCursor() {
-
-    followerX +=
-        (mouseX - followerX) * 0.12;
-
-    followerY +=
-        (mouseY - followerY) * 0.12;
-
-
-    follower.style.left =
-        `${followerX}px`;
-
-    follower.style.top =
-        `${followerY}px`;
-
-
-    requestAnimationFrame(
-        animateCursor
-    );
-
-}
-
-
-animateCursor();
-
 
 
 /* ==================================================
-   CURSOR HOVER
+   CARD TILT
 ================================================== */
 
-const interactiveElements =
+const cards =
     document.querySelectorAll(
-        "a, .project-image"
+        ".work-card"
     );
 
 
-interactiveElements.forEach((element) => {
+cards.forEach((card) => {
 
-    element.addEventListener(
-        "mouseenter",
-        () => {
+    card.addEventListener(
+        "mousemove",
+        (event) => {
 
-            follower.style.width =
-                "65px";
+            const rect =
+                card.getBoundingClientRect();
 
-            follower.style.height =
-                "65px";
 
-            follower.style.background =
-                "rgba(255,255,255,0.08)";
+            const x =
+                event.clientX -
+                rect.left;
+
+
+            const y =
+                event.clientY -
+                rect.top;
+
+
+            const rotateX =
+                ((y / rect.height) - 0.5) * -5;
+
+
+            const rotateY =
+                ((x / rect.width) - 0.5) * 5;
+
+
+            card.style.transform =
+                `perspective(900px)
+                 rotateX(${rotateX}deg)
+                 rotateY(${rotateY}deg)`;
+
 
         }
     );
 
 
-    element.addEventListener(
+    card.addEventListener(
         "mouseleave",
         () => {
 
-            follower.style.width =
-                "36px";
-
-            follower.style.height =
-                "36px";
-
-            follower.style.background =
-                "transparent";
+            card.style.transform =
+                "perspective(900px) rotateX(0) rotateY(0)";
 
         }
     );
@@ -109,15 +73,24 @@ interactiveElements.forEach((element) => {
 
 const revealElements =
     document.querySelectorAll(
-        ".project, .about-content, .skills, .contact"
+        ".work-card, .about-window, .contact"
     );
 
 
-revealElements.forEach((element) => {
+revealElements.forEach(
+    (element) => {
 
-    element.classList.add("reveal");
+        element.style.opacity =
+            "0";
 
-});
+        element.style.transform =
+            "translateY(35px)";
+
+        element.style.transition =
+            "opacity .7s ease, transform .7s ease";
+
+    }
+);
 
 
 const observer =
@@ -125,19 +98,27 @@ const observer =
 
         (entries) => {
 
-            entries.forEach((entry) => {
+            entries.forEach(
+                (entry) => {
 
-                if (
-                    entry.isIntersecting
-                ) {
+                    if (
+                        entry.isIntersecting
+                    ) {
 
-                    entry.target.classList.add(
-                        "visible"
-                    );
+                        entry.target.style.opacity =
+                            "1";
+
+                        entry.target.style.transform =
+                            "translateY(0)";
+
+                        observer.unobserve(
+                            entry.target
+                        );
+
+                    }
 
                 }
-
-            });
+            );
 
         },
 
@@ -148,127 +129,188 @@ const observer =
     );
 
 
-revealElements.forEach((element) => {
+revealElements.forEach(
+    (element) => {
 
-    observer.observe(element);
+        observer.observe(element);
 
-});
+    }
+);
 
 
 
 /* ==================================================
-   PROJECT HOVER PARALLAX
+   RANDOM FLOATING STARS
 ================================================== */
 
-const projects =
-    document.querySelectorAll(
-        ".project-image"
-    );
+const symbols = [
+    "✦",
+    "✧",
+    "♡",
+    "⋆",
+    "⊹"
+];
 
 
-projects.forEach((project) => {
+function createStar() {
 
-    const visual =
-        project.querySelector(
-            ".project-visual"
+    const star =
+        document.createElement(
+            "div"
         );
 
 
-    project.addEventListener(
-        "mousemove",
-        (event) => {
-
-            const rect =
-                project.getBoundingClientRect();
-
-
-            const x =
-                event.clientX -
-                rect.left;
+    star.textContent =
+        symbols[
+            Math.floor(
+                Math.random() *
+                symbols.length
+            )
+        ];
 
 
-            const y =
-                event.clientY -
-                rect.top;
+    star.style.position =
+        "fixed";
 
 
-            const moveX =
-                (x / rect.width - 0.5) * 15;
+    star.style.left =
+        Math.random() * 100 + "%";
 
 
-            const moveY =
-                (y / rect.height - 0.5) * 15;
+    star.style.top =
+        Math.random() * 100 + "%";
 
 
-            visual.style.transform =
-                `scale(1.06)
-                 translate(${moveX}px, ${moveY}px)`;
+    star.style.fontSize =
+        (8 + Math.random() * 14) +
+        "px";
+
+
+    star.style.color =
+        "#b38aff";
+
+
+    star.style.opacity =
+        "0.45";
+
+
+    star.style.pointerEvents =
+        "none";
+
+
+    star.style.zIndex =
+        "-1";
+
+
+    star.style.transition =
+        "transform 4s ease-in-out";
+
+
+    document.body.appendChild(
+        star
+    );
+
+
+    setTimeout(() => {
+
+        star.style.transform =
+            `translate(
+                ${(Math.random() - 0.5) * 80}px,
+                ${(Math.random() - 0.5) * 80}px
+            )`;
+
+    }, 100);
+
+
+}
+
+
+for (
+    let i = 0;
+    i < 15;
+    i++
+) {
+
+    createStar();
+
+}
+
+
+
+/* ==================================================
+   EMAIL BUTTON
+================================================== */
+
+const emailButton =
+    document.querySelector(
+        ".email-button"
+    );
+
+
+if (emailButton) {
+
+    emailButton.addEventListener(
+        "mouseenter",
+        () => {
+
+            document.title =
+                "♡ SEND YAN A MESSAGE ♡";
 
         }
     );
 
 
-    project.addEventListener(
+    emailButton.addEventListener(
         "mouseleave",
         () => {
 
-            visual.style.transform =
-                "scale(1)";
+            document.title =
+                "YAN.EXE ✦ Digital Playground";
 
         }
     );
 
-});
+}
 
 
 
 /* ==================================================
-   SMOOTH ANCHOR LINKS
+   SIMPLE PARALLAX
 ================================================== */
 
-document
-    .querySelectorAll('a[href^="#"]')
-    .forEach((link) => {
-
-        link.addEventListener(
-            "click",
-            (event) => {
-
-                const targetId =
-                    link.getAttribute("href");
+const character =
+    document.querySelector(
+        ".hero-character"
+    );
 
 
-                if (
-                    targetId === "#"
-                ) {
+window.addEventListener(
+    "mousemove",
+    (event) => {
 
-                    event.preventDefault();
-
-                    return;
-
-                }
+        if (!character) return;
 
 
-                const target =
-                    document.querySelector(
-                        targetId
-                    );
+        const x =
+            (event.clientX /
+                window.innerWidth -
+                0.5) *
+            12;
 
 
-                if (target) {
+        const y =
+            (event.clientY /
+                window.innerHeight -
+                0.5) *
+            12;
 
-                    event.preventDefault();
 
+        character.style.transform =
+            `translate(
+                ${x}px,
+                ${y}px
+            )`;
 
-                    target.scrollIntoView({
-
-                        behavior: "smooth"
-
-                    });
-
-                }
-
-            }
-        );
-
-    });
+    }
+);
+```
